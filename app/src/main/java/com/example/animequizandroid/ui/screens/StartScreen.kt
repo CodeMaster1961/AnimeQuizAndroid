@@ -31,7 +31,8 @@ import com.example.animequizandroid.R
 
 @Composable
 fun StartScreen(
-    viewModel: AnimeQuizViewModel
+    viewModel: AnimeQuizViewModel,
+    navigateUp: () -> Unit
 ) {
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -46,7 +47,8 @@ fun StartScreen(
             inputValue = viewModel.username,
             onValueChange = {
                 viewModel.username = it
-            }
+            },
+            onClick = { navigateUp() }
         )
         Text(
             text = "Anime Quiz", fontSize = 30.sp,
@@ -62,7 +64,8 @@ fun StartScreen(
 @Composable
 fun WelcomeCard(
     inputValue: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    onClick: () -> Unit
 ) {
     Card(
         shape = ShapeDefaults.Medium,
@@ -92,14 +95,15 @@ fun WelcomeCard(
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 5.dp)
         )
-        StartQuizForm(inputValue = inputValue, onValueChange = onValueChange)
+        StartQuizForm(inputValue = inputValue, onValueChange = onValueChange, onClick)
     }
 }
 
 @Composable
 fun StartQuizForm(
     inputValue: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    onClick: () -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.Bottom,
@@ -113,7 +117,7 @@ fun StartQuizForm(
             label = { Text(text = "Username") },
             modifier = Modifier.padding(bottom = 10.dp)
         )
-        SubmitButton({})
+        SubmitButton(onClick)
     }
 }
 

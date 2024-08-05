@@ -66,6 +66,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.timber)
     implementation(libs.converter.gson)
+    implementation(libs.coil.compose)
 
     // DI
     implementation(libs.koin.android)

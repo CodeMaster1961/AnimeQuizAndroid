@@ -13,3 +13,7 @@ data class Question(
     val optionFour: String,
     val correctAnswer: Int
 )
+
+fun Question.getOptions(): List<String> {
+    return listOf(optionOne,optionTwo,optionThree,optionFour)
+}

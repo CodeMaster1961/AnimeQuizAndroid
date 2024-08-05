@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.animequizandroid.ui.screens.AnimeQuizScreen
 import com.example.animequizandroid.ui.screens.AnimeQuizViewModel
 import com.example.animequizandroid.ui.screens.StartScreen
 import com.example.animequizandroid.ui.theme.AnimeQuizAndroidTheme
@@ -27,11 +28,17 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    val viewModel = getViewModel<AnimeQuizViewModel>()
                     val navController = rememberNavController()
                     NavHost(navController = navController, startDestination = "start_screen") {
                         composable(route = "start_screen") {
-                            val viewModel = getViewModel<AnimeQuizViewModel>()
-                            StartScreen(viewModel = viewModel)
+                            StartScreen(viewModel = viewModel,
+                                navigateUp = {
+                                    navController.navigate("quiz_screen")
+                                })
+                        }
+                        composable("quiz_screen") {
+                            AnimeQuizScreen(viewModel = viewModel)
                         }
                     }
                 }
@@ -39,3 +46,4 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
