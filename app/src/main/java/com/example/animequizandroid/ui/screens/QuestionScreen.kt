@@ -81,8 +81,11 @@ fun SubmitAnswerButton(
 ) {
     Button(
         onClick = {
-            viewModel.submitAnswer(isCorrectAnswer)
-            onNextClick()
+            if (!viewModel.isAnswerSubmitted) {
+                viewModel.submitAnswer(isCorrectAnswer)
+            } else {
+                onNextClick()
+            }
         }, modifier = Modifier
             .fillMaxWidth()
             .padding(end = 10.dp, start = 10.dp, top = 10.dp),

@@ -22,7 +22,6 @@ class AnimeQuizViewModel(
     private val _questions = MutableStateFlow<List<Question>>(emptyList())
     val questions: StateFlow<List<Question>> = _questions.asStateFlow()
     var isSelected by mutableIntStateOf(-1)
-    var isClicked by mutableStateOf(false)
 
     var isAnswerSubmitted by mutableStateOf(false)
     var isAnswerCorrect by mutableStateOf(false)
@@ -34,12 +33,24 @@ class AnimeQuizViewModel(
         getQuestions()
     }
 
+    /**
+     * Navigates to the next question
+     * @author Ömer Aynaci
+     */
     fun nextQuestion() {
-        if (currentQuestionIndex.value < questions.value.size) {
+        val currentQuestion = currentQuestionIndex.value
+        val questions = questions.value.size
+        if (currentQuestion < questions - 1) {
             _currentQuestionIndex.value += 1
+            isAnswerSubmitted = false
+            isSelected = -1
         }
     }
 
+    /**
+     * Gets all the questions
+     * @author Ömer Aynaci
+     */
     private fun getQuestions() {
         viewModelScope.launch {
             val questionsList = animeQuizRepository.getAllQuestions()
@@ -47,14 +58,30 @@ class AnimeQuizViewModel(
         }
     }
 
+    /**
+     * Validates the username
+     * @author Ömer Aynaci
+     * @return true if the username is valid otherwise false
+     */
     fun validateUsername(): Boolean {
         return username.length in 5..10
     }
 
+    /**
+     * Indicates the selected answer
+     * @author Ömer Aynaci
+     * @param index the index of the answers
+     */
     fun selectedAnswer(index: Int) {
         isSelected = index
     }
 
+    /**
+     * Shows the answer results
+     * @param index the index of the submitted answer
+     * @param color the color of the results that's being highlighted
+     * @return instance of the Color class
+     */
     fun showSubmittedAnswerResults(index: Int, color: Color): Color {
         return if (isAnswerSubmitted) {
             if (isSelected == index) {
@@ -67,6 +94,12 @@ class AnimeQuizViewModel(
         }
     }
 
+    /**
+     * When an answer is selected the color is highlighted to indicate what answer the user has selected
+     * @author Ömer Aynaci
+     * @param isSelected checks if the user has selected an answer
+     * @return an instance of the Color instance
+     */
     fun borderColor(isSelected: Boolean): Color {
         return if (isSelected) {
             Color.Blue
@@ -75,6 +108,11 @@ class AnimeQuizViewModel(
         }
     }
 
+    /**
+     * Submits the answer
+     * @author Ömer Aunaci
+     * @param correctAnswer the correct answer of the question
+     */
     fun submitAnswer(correctAnswer: Int) {
         isAnswerSubmitted = true
         isAnswerCorrect = isSelected == correctAnswer
