@@ -13,9 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,9 +48,12 @@ fun QuizQuestionDisplay(
         AsyncImage(model = question.image, contentDescription = "")
         AnswerButtons(
             answers = question.getOptions(),
-            viewModel,
+            viewModel
         )
-        SubmitAnswerButton(onSubmit = { }, onNextClick = onNextClick)
+        SubmitAnswerButton(
+            viewModel,
+            question.correctAnswer
+        )
     }
 }
 
@@ -68,32 +68,24 @@ fun QuestionText(questionText: String) {
 }
 
 @Composable
-fun SubmitAnswerButton(onSubmit: () -> Unit, onNextClick: () -> Unit) {
-    var isClicked by remember {
-        mutableStateOf(false)
-    }
-
+fun SubmitAnswerButton(
+    viewModel: AnimeQuizViewModel,
+    isCorrectAnswer: Int
+) {
     Button(
         onClick = {
-            isClicked = true
+            viewModel.submitAnswer(isCorrectAnswer)
         }, modifier = Modifier
             .fillMaxWidth()
             .padding(end = 10.dp, start = 10.dp, top = 10.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
-        if (isClicked) {
-            Text(text = "Next")
-            onNextClick()
-        } else {
-            Text(text = "Submit")
-            onSubmit()
-        }
+        if (viewModel.isAnswerSubmitted) Text(text = "Next") else Text(text = "Submit")
     }
 }
 
 @Composable
 fun AnswerButtons(answers: List<String>, viewModel: AnimeQuizViewModel) {
-
     answers.forEachIndexed { index, answer ->
         AnswerButton(
             viewModel = viewModel,
@@ -102,6 +94,8 @@ fun AnswerButtons(answers: List<String>, viewModel: AnimeQuizViewModel) {
                 viewModel.selectedAnswer(index)
             },
             isSelected = viewModel.isSelected == index,
+            containerColor = viewModel.showSubmittedAnswerResults(index, Color.White),
+            disabledContainerColor = viewModel.showSubmittedAnswerResults(index, Color.Gray)
         )
     }
 }
@@ -111,20 +105,23 @@ fun AnswerButton(
     viewModel: AnimeQuizViewModel,
     answer: String,
     onClick: () -> Unit,
-    isSelected: Boolean
+    isSelected: Boolean,
+    containerColor: Color = Color.White,
+    disabledContainerColor: Color
 ) {
-
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(8.dp),
         border = BorderStroke(2.dp, viewModel.borderColor(isSelected)),
         colors = ButtonDefaults.buttonColors(
-            containerColor = Color.White,
-            contentColor = Color.Black
+            containerColor = containerColor,
+            contentColor = Color.Black,
+            disabledContainerColor = disabledContainerColor,
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(end = 10.dp, start = 10.dp, top = 10.dp)
+            .padding(end = 10.dp, start = 10.dp, top = 10.dp),
+        enabled = !viewModel.isAnswerSubmitted
     ) {
         Text(text = answer, color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold)
     }

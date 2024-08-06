@@ -22,6 +22,10 @@ class AnimeQuizViewModel(
     private val _questions = MutableStateFlow<List<Question>>(emptyList())
     val questions: StateFlow<List<Question>> = _questions.asStateFlow()
     var isSelected by mutableIntStateOf(-1)
+    var isClicked by mutableStateOf(false)
+
+    var isAnswerSubmitted by mutableStateOf(false)
+    var isAnswerCorrect by mutableStateOf(false)
 
     private val _currentQuestionIndex = MutableStateFlow(0)
     val currentQuestionIndex: StateFlow<Int> = _currentQuestionIndex.asStateFlow()
@@ -45,6 +49,18 @@ class AnimeQuizViewModel(
         isSelected = index
     }
 
+    fun showSubmittedAnswerResults(index: Int, color: Color): Color {
+       return if (isAnswerSubmitted) {
+            if (isSelected == index) {
+                if (isAnswerCorrect) Color.Green else Color.Red
+            } else {
+                color
+            }
+        } else {
+            color
+        }
+    }
+
     fun borderColor(isSelected: Boolean): Color {
         return if (isSelected) {
             Color.Blue
@@ -53,11 +69,8 @@ class AnimeQuizViewModel(
         }
     }
 
-    fun showCorrectAnswer(question: Question, index: Int) {
-        if (index == question.correctAnswer) {
-            println("You are correct!")
-        } else {
-            println("You are wrong!")
-        }
+    fun submitAnswer(correctAnswer: Int) {
+        isAnswerSubmitted = true
+        isAnswerCorrect = isSelected == correctAnswer
     }
 }
