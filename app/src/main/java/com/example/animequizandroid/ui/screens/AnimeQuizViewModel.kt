@@ -37,6 +37,10 @@ class AnimeQuizViewModel(
         }
     }
 
+    fun validateUsername(): Boolean {
+        return username.length in 5..10
+    }
+
     fun selectedAnswer(index: Int) {
         isSelected = index
     }

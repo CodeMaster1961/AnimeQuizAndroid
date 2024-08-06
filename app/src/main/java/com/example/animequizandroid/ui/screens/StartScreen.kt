@@ -48,6 +48,7 @@ fun StartScreen(
             onValueChange = {
                 viewModel.username = it
             },
+            viewModel = viewModel,
             onClick = { navigateUp() }
         )
         Text(
@@ -65,6 +66,7 @@ fun StartScreen(
 fun WelcomeCard(
     inputValue: String,
     onValueChange: (String) -> Unit,
+    viewModel: AnimeQuizViewModel,
     onClick: () -> Unit
 ) {
     Card(
@@ -95,7 +97,12 @@ fun WelcomeCard(
                 .align(Alignment.CenterHorizontally)
                 .padding(top = 5.dp)
         )
-        StartQuizForm(inputValue = inputValue, onValueChange = onValueChange, onClick)
+        StartQuizForm(
+            inputValue = inputValue,
+            onValueChange = onValueChange,
+            viewModel.validateUsername(),
+            onClick
+        )
     }
 }
 
@@ -103,6 +110,7 @@ fun WelcomeCard(
 fun StartQuizForm(
     inputValue: String,
     onValueChange: (String) -> Unit,
+    isButtonEnabled: Boolean,
     onClick: () -> Unit
 ) {
     Column(
@@ -117,17 +125,19 @@ fun StartQuizForm(
             label = { Text(text = "Username") },
             modifier = Modifier.padding(bottom = 10.dp)
         )
-        SubmitButton(onClick)
+        SubmitButton(onClick, isButtonEnabled)
     }
 }
 
 @Composable
 fun SubmitButton(
-    onSubmit: () -> Unit
+    onSubmit: () -> Unit,
+    isButtonEnabled: Boolean
 ) {
     Button(
         onClick = { onSubmit() }, modifier = Modifier.width(290.dp),
-        shape = RoundedCornerShape(10.dp)
+        shape = RoundedCornerShape(10.dp),
+        enabled = isButtonEnabled
     ) {
         Text(text = "Start")
     }
