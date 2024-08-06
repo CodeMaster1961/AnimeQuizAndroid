@@ -30,7 +30,12 @@ fun AnimeQuizScreen(
 ) {
     val questions by viewModel.questions.collectAsState()
     val currentQuestionIndex by viewModel.currentQuestionIndex.collectAsState()
-    QuizQuestionDisplay(question = questions[currentQuestionIndex], viewModel = viewModel, {})
+    QuizQuestionDisplay(
+        question = questions[currentQuestionIndex],
+        viewModel = viewModel,
+        onNextClick = {
+            viewModel.nextQuestion()
+        })
 }
 
 @Composable
@@ -52,7 +57,8 @@ fun QuizQuestionDisplay(
         )
         SubmitAnswerButton(
             viewModel,
-            question.correctAnswer
+            question.correctAnswer,
+            onNextClick
         )
     }
 }
@@ -70,11 +76,13 @@ fun QuestionText(questionText: String) {
 @Composable
 fun SubmitAnswerButton(
     viewModel: AnimeQuizViewModel,
-    isCorrectAnswer: Int
+    isCorrectAnswer: Int,
+    onNextClick: () -> Unit
 ) {
     Button(
         onClick = {
             viewModel.submitAnswer(isCorrectAnswer)
+            onNextClick()
         }, modifier = Modifier
             .fillMaxWidth()
             .padding(end = 10.dp, start = 10.dp, top = 10.dp),

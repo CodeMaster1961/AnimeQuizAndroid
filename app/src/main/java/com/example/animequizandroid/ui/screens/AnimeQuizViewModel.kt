@@ -34,6 +34,12 @@ class AnimeQuizViewModel(
         getQuestions()
     }
 
+    fun nextQuestion() {
+        if (currentQuestionIndex.value < questions.value.size) {
+            _currentQuestionIndex.value += 1
+        }
+    }
+
     private fun getQuestions() {
         viewModelScope.launch {
             val questionsList = animeQuizRepository.getAllQuestions()
@@ -50,7 +56,7 @@ class AnimeQuizViewModel(
     }
 
     fun showSubmittedAnswerResults(index: Int, color: Color): Color {
-       return if (isAnswerSubmitted) {
+        return if (isAnswerSubmitted) {
             if (isSelected == index) {
                 if (isAnswerCorrect) Color.Green else Color.Red
             } else {
