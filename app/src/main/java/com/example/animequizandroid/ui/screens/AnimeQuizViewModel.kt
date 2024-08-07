@@ -29,8 +29,17 @@ class AnimeQuizViewModel(
     private val _currentQuestionIndex = MutableStateFlow(0)
     val currentQuestionIndex: StateFlow<Int> = _currentQuestionIndex.asStateFlow()
 
+    private val _correctAnsweredPoints = MutableStateFlow(0)
+    val correctAnsweredPoints: StateFlow<Int> = _correctAnsweredPoints.asStateFlow()
+
     init {
         getQuestions()
+    }
+
+    private fun increaseScore() {
+        if (isAnswerCorrect) {
+            _correctAnsweredPoints.value += 1
+        }
     }
 
     /**
@@ -44,6 +53,19 @@ class AnimeQuizViewModel(
             _currentQuestionIndex.value += 1
             isAnswerSubmitted = false
             isSelected = -1
+            if (isAnswerCorrect) {
+                _correctAnsweredPoints.value += 1
+            }
+        }
+    }
+
+
+    private fun lastQuestion(onFinish: () -> Unit) {
+        if (currentQuestionIndex.value == questions.value.size - 1) {
+            if (isAnswerCorrect) {
+                _correctAnsweredPoints.value += 1
+            }
+            onFinish()
         }
     }
 
@@ -55,6 +77,16 @@ class AnimeQuizViewModel(
         viewModelScope.launch {
             val questionsList = animeQuizRepository.getAllQuestions()
             _questions.value = questionsList
+        }
+    }
+
+    fun calculateScore(onNextClick: () -> Unit, onFinish: () -> Unit) {
+        val currentQuestion = currentQuestionIndex.value
+        val totalQuestions = questions.value.size
+        if (currentQuestion < totalQuestions - 1) {
+            onNextClick()
+        } else {
+            lastQuestion(onFinish)
         }
     }
 

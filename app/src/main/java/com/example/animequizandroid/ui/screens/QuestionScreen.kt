@@ -26,7 +26,8 @@ import com.example.animequizandroid.data.dtos.getOptions
 
 @Composable
 fun AnimeQuizScreen(
-    viewModel: AnimeQuizViewModel
+    viewModel: AnimeQuizViewModel,
+    navigateUp: () -> Unit
 ) {
     val questions by viewModel.questions.collectAsState()
     val currentQuestionIndex by viewModel.currentQuestionIndex.collectAsState()
@@ -35,14 +36,17 @@ fun AnimeQuizScreen(
         viewModel = viewModel,
         onNextClick = {
             viewModel.nextQuestion()
-        })
+        },
+        onFinishClick = navigateUp
+    )
 }
 
 @Composable
 fun QuizQuestionDisplay(
     question: Question,
     viewModel: AnimeQuizViewModel,
-    onNextClick: () -> Unit
+    onNextClick: () -> Unit,
+    onFinishClick: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -58,7 +62,8 @@ fun QuizQuestionDisplay(
         SubmitAnswerButton(
             viewModel,
             question.correctAnswer,
-            onNextClick
+            onNextClick,
+            onFinishClick
         )
     }
 }
@@ -77,14 +82,15 @@ fun QuestionText(questionText: String) {
 fun SubmitAnswerButton(
     viewModel: AnimeQuizViewModel,
     isCorrectAnswer: Int,
-    onNextClick: () -> Unit
+    onNextClick: () -> Unit,
+    onFinishClick: () -> Unit
 ) {
     Button(
         onClick = {
             if (!viewModel.isAnswerSubmitted) {
                 viewModel.submitAnswer(isCorrectAnswer)
             } else {
-                onNextClick()
+                viewModel.calculateScore(onNextClick,onFinishClick)
             }
         }, modifier = Modifier
             .fillMaxWidth()
