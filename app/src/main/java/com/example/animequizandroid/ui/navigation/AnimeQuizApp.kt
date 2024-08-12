@@ -29,7 +29,10 @@ fun AnimeQuizApp(
         }
 
         composable(AppScreens.RESULT_SCREEN.name) {
-            ResultScreen(viewModel = animeQuizViewModel)
+            ResultScreen(viewModel = animeQuizViewModel,
+                navigateToHome = {
+                    navController.navigate(AppScreens.START_SCREEN.name)
+                })
         }
     }
 }
